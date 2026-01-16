@@ -5,17 +5,41 @@ require("dotenv").config();
 
 const app = express();
 
+/* ======================
+   MIDDLEWARE
+====================== */
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch(err => console.log(err));
+/* ======================
+   DATABASE CONNECTION
+====================== */
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB error:", err));
 
+/* ======================
+   ROUTES
+====================== */
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/menu", require("./routes/menu"));
-app.use("/api/order", require("./routes/order"));
 
-app.listen(process.env.PORT, () =>
-  console.log(`Server running on port ${process.env.PORT}`)
-);
+/* ======================
+   TEST ROUTE
+====================== */
+app.get("/", (req, res) => {
+  res.send("🚀 Andhra Coffee Backend API is running");
+});
+
+/* ======================
+   SERVER START
+====================== */
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});
